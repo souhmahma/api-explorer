@@ -23,31 +23,31 @@
 
 ## Features
 
-### 🔍 Auto-Discovery
+### Auto-Discovery
 Paste any API base URL and APIX automatically fetches its OpenAPI/Swagger spec (`/openapi.json`, `/swagger.json`, `/api-docs`). All endpoints are listed with their method, path, and description. Click any endpoint to instantly populate the request builder.
 
-### 🛠 Request Builder
+### Request Builder
 Full control over every part of your request — HTTP method (GET, POST, PUT, PATCH, DELETE), URL, headers, and JSON body. 
 
-### 🔐 Authentication
+### Authentication
 Three auth modes, all sent securely via HTTP headers — never exposed in the URL or logs:
 - **Bearer** — `Authorization: Bearer <token>`
 - **API Key** — any custom header name (e.g. `X-API-Key`)
 - **Basic** — `Authorization: Basic <base64>`
 
-### 🌲 JSON Tree View
+### JSON Tree View
 Responses are rendered as an interactive collapsible tree with syntax coloring for strings, numbers, booleans, and nulls. Deep objects auto-collapse.
 
-### 📊 Table View
+### Table View
 When the response is an array of objects, a **Table** tab appears automatically and renders the data as a clean, scrollable table with auto-detected columns.
 
-### 📡 Response Metadata
+### Response Metadata
 Every response shows status code (color-coded), response time in ms, size in bytes, and the final resolved URL.
 
-### 🕓 Request History
+### Request History
 The last 20 requests are saved in the sidebar. Click any entry to reload the URL, method, and response instantly.
 
-### 🔄 CORS Proxy
+### CORS Proxy
 All requests go through a local FastAPI proxy — no browser CORS errors, no browser extensions needed.
 
 ---
