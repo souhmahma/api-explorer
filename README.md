@@ -1,4 +1,4 @@
-# APIX — Visual API Explorer
+# APIX : Visual API Explorer
 
 > A lightweight Postman alternative built in the browser — with auto-discovery, JSON tree visualization, table view, and a FastAPI proxy to bypass CORS.
 
