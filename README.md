@@ -1,101 +1,87 @@
 # APIX — Visual API Explorer
 
-A beautiful API explorer with a **FastAPI proxy backend** (to avoid CORS issues) and a **React frontend** with collapsible JSON tree, request history, and auth support.
+> A lightweight Postman alternative built in the browser — with auto-discovery, JSON tree visualization, table view, and a FastAPI proxy to bypass CORS.
 
 ---
 
-## Project Structure
+## Screenshots
 
-```
-api-explorer/
-├── backend/
-│   ├── main.py          # FastAPI proxy server
-│   └── requirements.txt
-└── frontend/
-    ├── src/
-    │   ├── App.jsx      # Main app
-    │   ├── App.css      # Styles
-    │   ├── JsonTree.jsx # Collapsible JSON viewer
-    │   ├── History.jsx  # Request history sidebar
-    │   └── main.jsx     # Entry point
-    ├── index.html
-    ├── package.json
-    └── vite.config.js
-```
+![Auto-Discovery](screenshots/discovery.png)
+*Auto-discover all endpoints from any OpenAPI/Swagger spec*
 
----
+![Request Builder](screenshots/request.png)
+![Request Builder](screenshots/baerer.png)
+*Build requests with auth, custom headers, and JSON body*
 
-## Setup
+![JSON Tree Response](screenshots/tree.png)
+*Collapsible JSON tree with syntax highlighting*
 
-### 1. Backend (FastAPI)
-
-```bash
-cd backend
-
-# Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the server
-uvicorn main:app --reload --port 8000
-```
-
-Backend runs at: http://localhost:8000  
-Swagger docs at: http://localhost:8000/docs
-
----
-
-### 2. Frontend (React + Vite)
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-```
-
-Frontend runs at: http://localhost:5173
+![Table View](screenshots/table.png)
+*Array responses rendered as a clean data table*
 
 ---
 
 ## Features
 
-- **Proxy all requests** through FastAPI — no CORS issues
-- **Methods**: GET, POST, PUT, PATCH, DELETE
-- **Auth**: Bearer token, API Key (custom header), Basic (Base64)
-- **Custom headers** — add as many as you need
-- **Request body** — JSON editor for POST/PUT/PATCH
-- **Collapsible JSON tree** — auto-collapses deep objects, click to expand
-- **Response metadata** — status code, response time (ms), response size
-- **Response headers** — inspect all headers from the target API
-- **Request history** — last 20 requests, click to reload
+### 🔍 Auto-Discovery
+Paste any API base URL and APIX automatically fetches its OpenAPI/Swagger spec (`/openapi.json`, `/swagger.json`, `/api-docs`). All endpoints are listed with their method, path, and description. Click any endpoint to instantly populate the request builder.
+
+### 🛠 Request Builder
+Full control over every part of your request — HTTP method (GET, POST, PUT, PATCH, DELETE), URL, headers, and JSON body. 
+
+### 🔐 Authentication
+Three auth modes, all sent securely via HTTP headers — never exposed in the URL or logs:
+- **Bearer** — `Authorization: Bearer <token>`
+- **API Key** — any custom header name (e.g. `X-API-Key`)
+- **Basic** — `Authorization: Basic <base64>`
+
+### 🌲 JSON Tree View
+Responses are rendered as an interactive collapsible tree with syntax coloring for strings, numbers, booleans, and nulls. Deep objects auto-collapse.
+
+### 📊 Table View
+When the response is an array of objects, a **Table** tab appears automatically and renders the data as a clean, scrollable table with auto-detected columns.
+
+### 📡 Response Metadata
+Every response shows status code (color-coded), response time in ms, size in bytes, and the final resolved URL.
+
+### 🕓 Request History
+The last 20 requests are saved in the sidebar. Click any entry to reload the URL, method, and response instantly.
+
+### 🔄 CORS Proxy
+All requests go through a local FastAPI proxy — no browser CORS errors, no browser extensions needed.
 
 ---
 
-## How the Proxy Works
+## Setup
 
-All requests from the frontend go to:
-
+**Backend**
+```bash
+cd backend
+python -m venv venv && source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
 ```
-GET/POST http://localhost:8000/proxy?__url=<target-url>&__auth=<token>&__auth_type=Bearer
+
+**Frontend**
+```bash
+cd frontend
+npm install && npm run dev
 ```
 
-The FastAPI proxy:
-1. Strips the internal `__url`, `__auth`, `__auth_type` params
-2. Forwards the request to the real target URL
-3. Returns a unified response with `status_code`, `headers`, `body`, `elapsed_ms`
+Open `http://localhost:5173` — backend must be running on port `8000`.
 
 ---
 
-## Example APIs to try
+## Tech Stack
 
-- `https://jsonplaceholder.typicode.com/posts` — fake REST API
-- `https://httpbin.org/get` — inspect your own request
-- `https://api.github.com/users/octocat` — GitHub public API
-- `https://catfact.ninja/fact` — random cat facts
+| Layer | Tech |
+|---|---|
+| Frontend | React 18, Vite |
+| Backend | FastAPI, httpx |
+
+
+## 👤 Author
+
+**Souhail HMAHMA** — Full Stack Developer
+
+🌐 [souhail3.vercel.app](https://souhail3.vercel.app) · 💼 [LinkedIn](https://linkedin.com/in/souhail-hmahma) · 🐙 [GitHub](https://github.com/souhmahma)
