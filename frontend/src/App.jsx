@@ -7,11 +7,17 @@ const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 const AUTH_TYPES = ["None", "Bearer", "API Key", "Basic"]
 const PROXY_BASE = "http://localhost:8000/proxy"
 
-function buildProxyUrl(url, authType, authValue) {
+function buildProxyUrl(url) {
   const params = new URLSearchParams({ __url: url })
-  if (authType === "Bearer" && authValue) { params.set("__auth", authValue); params.set("__auth_type", "Bearer") }
-  if (authType === "Basic" && authValue) { params.set("__auth", authValue); params.set("__auth_type", "Basic") }
   return `${PROXY_BASE}?${params.toString()}`
+}
+
+function buildAuthHeader(authType, authValue, authKeyName) {
+  if (!authValue) return {}
+  if (authType === "Bearer") return { "Authorization": `Bearer ${authValue}` }
+  if (authType === "Basic")  return { "Authorization": `Basic ${authValue}` }
+  if (authType === "API Key") return { [authKeyName]: authValue }
+  return {}
 }
 
 function JsonTable({ data }) {
@@ -118,7 +124,7 @@ export default function App() {
     let found = null
     for (const candidate of candidates) {
       try {
-        const res = await fetch(buildProxyUrl(candidate, authType, authValue))
+        const res = await fetch(buildProxyUrl(candidate), { headers: buildAuthHeader(authType, authValue, authKeyName) })
         const data = await res.json()
         if (data.status_code === 200 && data.body?.paths) { found = { url: candidate, spec: data.body }; break }
       } catch (_) {}
@@ -162,18 +168,29 @@ export default function App() {
     if (!url) return
     setLoading(true); setError(null); setResponse(null)
     try {
-      const reqHeaders = { "Content-Type": "application/json" }
+      const reqHeaders = {
+        "Content-Type": "application/json",
+        ...buildAuthHeader(authType, authValue, authKeyName),
+      }
       headers.forEach(({ key, value }) => { if (key) reqHeaders[key] = value })
-      if (authType === "API Key" && authValue) reqHeaders[authKeyName] = authValue
       const opts = { method, headers: reqHeaders }
       if (["POST", "PUT", "PATCH"].includes(method) && body) opts.body = body
-      const res = await fetch(buildProxyUrl(url, authType, authValue), opts)
+      const res = await fetch(buildProxyUrl(url), opts)
       const data = await res.json()
-      setResponseView(Array.isArray(data.body) ? "table" : "tree")
-      const entry = { id: Date.now(), method, url, status: data.status_code, elapsed: data.elapsed_ms, timestamp: new Date().toLocaleTimeString(), response: data }
-      setResponse(data)
+
+      // Backend returned a 500 (invalid URL, connection error, etc.)
+      if (!res.ok && data.detail) {
+        setError(data.detail)
+        setLoading(false)
+        return
+      }
+
+      const safeBody = data.body ?? null
+      setResponseView(Array.isArray(safeBody) ? "table" : "tree")
+      const entry = { id: Date.now(), method, url, status: data.status_code, elapsed: data.elapsed_ms, timestamp: new Date().toLocaleTimeString(), response: { ...data, body: safeBody } }
+      setResponse({ ...data, body: safeBody })
       setHistory(h => [entry, ...h].slice(0, 20))
-    } catch (e) { setError(e.message) }
+    } catch (e) { setError("Could not reach the proxy. Is the FastAPI server running?") }
     finally { setLoading(false) }
   }
 
@@ -297,7 +314,7 @@ export default function App() {
             <div className="response-meta">
               <span className={`status-badge ${statusColor(response.status_code)}`}>{response.status_code}</span>
               <span className="meta-item">{response.elapsed_ms} ms</span>
-              <span className="meta-item">{JSON.stringify(response.body).length} bytes</span>
+              <span className="meta-item">{response.body != null ? JSON.stringify(response.body).length : 0} bytes</span>
               <span className="meta-url">{response.url}</span>
             </div>
             <div className="response-tabs">
