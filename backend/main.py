@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import httpx
 import json
+import gzip
+import zlib
 
 app = FastAPI(title="API Explorer Proxy", version="1.0.0")
 
@@ -27,23 +29,21 @@ async def proxy(request: Request):
     try:
         params = dict(request.query_params)
         target_url = params.pop("__url", None)
-        auth_header = params.pop("__auth", None)
-        auth_type = params.pop("__auth_type", "Bearer")
 
         if not target_url:
             raise HTTPException(status_code=400, detail="Missing __url query parameter")
 
-        headers = {}
-        for key, value in request.headers.items():
-            if key.lower() not in ("host", "content-length", "connection"):
-                headers[key] = value
+        # Forward all headers except internal/hop-by-hop ones
+        SKIP_HEADERS = ("host", "content-length", "connection", "accept-encoding")
+        headers = {
+            k: v for k, v in request.headers.items()
+            if k.lower() not in SKIP_HEADERS
+        }
 
-        if auth_header:
-            headers["Authorization"] = f"{auth_type} {auth_header}"
+        # Force plain text — no compression
+        headers["Accept-Encoding"] = "identity"
 
-        headers.pop("__url", None)
-        headers.pop("__auth", None)
-        headers.pop("__auth_type", None)
+        # Auth is now sent directly in headers by the frontend — nothing to inject
 
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             response = await client.request(
@@ -54,10 +54,27 @@ async def proxy(request: Request):
                 content=body if body else None,
             )
 
+        # Decompress if server ignored our identity request
+        raw = response.content
+        encoding = response.headers.get("content-encoding", "")
         try:
-            response_body = response.json()
+            if encoding == "gzip":
+                raw = gzip.decompress(raw)
+            elif encoding in ("deflate", "zlib"):
+                raw = zlib.decompress(raw)
+            elif encoding == "br":
+                import brotli
+                raw = brotli.decompress(raw)
         except Exception:
-            response_body = response.text
+            pass
+
+        try:
+            response_body = json.loads(raw)
+        except Exception:
+            try:
+                response_body = raw.decode("utf-8")
+            except Exception:
+                response_body = raw.decode("latin-1")
 
         return JSONResponse(
             content={
