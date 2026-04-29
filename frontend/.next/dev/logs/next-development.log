@@ -1,0 +1,13 @@
+{"timestamp":"00:00:02.502","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:02.503","source":"Server","level":"LOG","message":"  We detected TypeScript in your project and reconfigured your tsconfig.json file for you."}
+{"timestamp":"00:00:02.504","source":"Server","level":"LOG","message":"  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:\n"}
+{"timestamp":"00:00:02.505","source":"Server","level":"LOG","message":"  \t- include was updated to add '.next/types/**/*.ts'"}
+{"timestamp":"00:00:02.506","source":"Server","level":"LOG","message":"  \t- include was updated to add '.next/dev/types/**/*.ts'"}
+{"timestamp":"00:00:02.506","source":"Server","level":"LOG","message":"  \t- plugins was updated to add { name: 'next' }"}
+{"timestamp":"00:00:02.507","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:02.508","source":"Server","level":"LOG","message":"  The following mandatory changes were made to your tsconfig.json:\n"}
+{"timestamp":"00:00:02.509","source":"Server","level":"LOG","message":"  \t- jsx was set to react-jsx (next.js uses the React automatic runtime)"}
+{"timestamp":"00:00:02.510","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:02.968","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:22.935","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:31.341","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}

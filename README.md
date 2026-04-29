@@ -68,7 +68,7 @@ cd frontend
 npm install && npm run dev
 ```
 
-Open `http://localhost:5173` — backend must be running on port `8000`.
+Open `http://localhost:3000` — backend must be running on port `8000`.
 
 ---
 
@@ -76,8 +76,8 @@ Open `http://localhost:5173` — backend must be running on port `8000`.
 
 | Layer | Tech |
 |---|---|
-| Frontend | React 18, Vite |
-| Backend | FastAPI, httpx |
+| Frontend | Next.js 14 (TypeScript)|
+| Backend | FastAPI, httpx, uvicorn |
 
 
 ## 👤 Author
