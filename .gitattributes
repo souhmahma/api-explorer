@@ -1,5 +1,0 @@
-# Marquer les fichiers JS compilés comme générés pour qu'ils soient ignorés des stats
-dist/**/*.js linguist-generated=true
-# Ou forcer tout le projet à être considéré comme du TypeScript
-*.ts linguist-detectable=true
-*.js linguist-detectable=false
