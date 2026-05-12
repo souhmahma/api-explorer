@@ -1,5 +1,7 @@
 # APIX : Visual API Explorer
 
+[![CI Build](https://github.com/souhmahma/api-explorer/actions/workflows/main.yml/badge.svg)](https://github.com/souhmahma/api-explorer/actions/workflows/main.yml)
+
 > A lightweight Postman alternative built in the browser — with auto-discovery, JSON tree visualization, table view, and a FastAPI proxy to bypass CORS.
 
 ---
