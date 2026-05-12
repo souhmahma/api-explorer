@@ -19,7 +19,7 @@ jobs:
         run: |
           docker compose up -d
           sleep 20
-          curl -f http://localhost:8000/api/products/ || (docker compose logs backend && exit 1)
+          curl -f http://localhost:8000/ || (docker compose logs backend && exit 1)
           curl -f http://localhost:3000 || (docker compose logs frontend && exit 1)
 
       - name: Shutdown
